@@ -13,9 +13,9 @@ var config = require("./config");
 var app = express();
 
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+//app.set("views", path.join(__dirname, "views"));
 
-app.use(express.static(path.join(__dirname, "public")));
+//app.use(express.static(path.join(__dirname, "public")));
 //app.use(bodyParser.text({ type: "*/*" }));
 
 /*
@@ -186,22 +186,24 @@ conexion.connect(function(err) {      
             
             app.get('/index.html',function(req,res){
                res.sendfile("index.html"); 
-               console.log(request.body);
-            });
              
-             app.post("/index.html", function(request, response) {
+            });
+
+             
+             app.post("index.html", function(request, response) {
     console.log(request.body);
-    response.end();
+    response.end("index.html");
+   // response.end();
 });
              
              app.listen(config.port, function() {
     console.log("Escuchando en el puerto 3000");
 });
 
+/*
         app.post("/procesar_formulario", function(request, response) {
     request.checkBody("login", "Nombre de usuario no válido").matches(/^[A-Z0-9]*$/i);
     request.checkBody("login", "Nombre de usuario vacío").notEmpty();
-    request.checkBody("login", "Nombre de usuario no empieza por a").empiezaPorA();
     request.checkBody("pass", "La contraseña no tiene entre 6 y 10 caracteres").isLength({ min: 6, max: 10 });
     request.checkBody("email", "Dirección de correo no válida").isEmail();
     request.checkBody("fechaNacimiento", "Fecha de nacimiento no válida").isBefore();
@@ -221,6 +223,8 @@ conexion.connect(function(err) {      
         }
     });
 });
+
+*/
 
 app.use(function(req, res, next) {
     res.status(404);
