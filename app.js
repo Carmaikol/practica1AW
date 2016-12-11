@@ -5,6 +5,7 @@
  */
 
 var mysql = require("mysql");
+//var express = require("express");
 var http =  require("http");
 var config = require("./config");
 
@@ -172,6 +173,11 @@ conexion.connect(function(err) {      
                    response.write('</body>');   
                    response.end(); 
             }
+            
+            /*
+            conexion.get('/',function(req,res){
+               res.sendfile("index.html"); 
+            });
+             */
              
-             
-           
+        
