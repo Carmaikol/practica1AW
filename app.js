@@ -3,12 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
+var multer = require('multer');
 var mysql = require("mysql");
 var express = require("express");
 var http =  require("http");
 var path = require("path");
 var config = require("./config");
+var db = require ("./db");
+
+
+var uploads = muter({
+    dest: 'public/uploads/'
+});
 
 var app = express();
 
@@ -35,76 +41,92 @@ var datosConexion = {
     database: config.dbName
 };
  var conexion = mysql.createConnection(datosConexion);
-/**
- * Obtiene el nombre y apellidos de un usuario a partir de su identificador
- * 
- * @param {string} id  Identificador del usuario a buscar
- * @param {function} callback  Función callback que recibirá el objeto Error (en su caso) 
- *              y el usuario recuperado como un objeto con dos atributos: nombre y apellidos.
- */
-function buscarPorId(id, callback) {
-    if (callback === undefined) callback = function() {};
-    
-    var conexion = mysql.createConnection(datosConexion);
-
-    conexion.connect(function(err) {
-        if (err) {
-            callback(err);
-        } else {
-            conexion.query("SELECT username, apellidos  " +
-                           "FROM users c " +
-                           "WHERE c.id = " + id,
-            function(err, result) {
-                var row = result[0];
-                var res = { nombre: row.username, apellidos: row.apellidos };
-                conexion.end();
-                callback(null, res);
-            });
-        }
-    });
-}
-
-/*
-buscarPorId("1", function(err, result) {
-    console.log(result);
-});
-*/
-/**
- * Obtiene todos los usuarios de la BD, cada uno con el número de direcciones
- * de correo asociadas al mismo.
- * 
- * @param {function} callback   Función que recibirá, además del objeto de tipo
- *          Error (en su caso), un array con cada uno de los usuarios. El array
- *          contendrá objetos con tres atributos: Nombre, Apellidos y NumCorreos.
  
-function devolverContactos(callback) {
-    if (callback === undefined) callback = function() {};
+ 
+ 
+ //LOGIN
+  app.post("/login",  function(request, response){
+      db.login(request.body, function(err, res){
+          if(err != null) response.render('error', { message:"Error Login", error:err});
+          if(res) {
+              db.loadPhoto(request.body.user, function(err, auxPhoto){
+                   if(err != null) response.render('error', { message:"Error Login", error:err});
+                   else {
+                       if(auxPhoto.lenght === 1) {
+                           response.render('MainWindow', {
+                               status: request.body.user,
+                               photo: auxPhoto[0].PHOTO
+                           });
+                       }else{
+                           response.render('MainWindow', {
+                               status: request.body.user,
+                               photo: null
+                           });
+                       }
+                   }
+              });
+          }else
+              response.render('error', { message: "Wrong password!", error = null});
+          
+      });
+ });
+ 
+ //SIGNUP
+ app.post("/signup", upload.single('file'), function(request, response){
+     var aux = {};
+     if(request.file !== undefined){
+         var auxFile = request.file.path + "." + request.file.mimetype.substr(6);
+         fs.rename(request.file.path, auxFile, function(err){
+            if(err){
+                response.render('error', { message:"Error SignUp", error:err});
+            } 
+         });
+         
+          aux.foto = request.file.filename + "." + request.file.mimetype.substr(6);
+     }else {
+         aux.foto = null;
+     }
+     
+     aux.username = request.body.username;
+     aux.pass = request.body.pass;
+     aux.fullname = request.body.fullname;
+     aux.gender = request.body.gender;
+     aux.birthdate = request.body.birthdate;
+     db.signup(aux, function(err, res){
+         if(err != null) response.render('error', { message: "Error SignUp", error : err});
+         if(res) response.redirect('/');
+     });
+     
     
-    var conexion = mysql.createConnection(datosConexion);
+ 
+ });
+ 
+ //CREATE GAME
+  app.get('/createGame', function(request, response){
+    db.creategame(request.query, function(err, res){
+        if(err != null) response.render('error', { message: "Error CreateGame", error : err});
+        if(res) response.redirect('/');
+    }); 
+ });
+ 
+ //JOIN GAME
+ app.get('/joinGame',function(request, response){
+    db.join(request.query, function(err, res){
+        if(err != null) response.render('error', { message: "Error JoinGame", error : err});
+        if(res) response.redirect('/mainBoard');
+    }); 
+ });
+ 
+ //ENDGAME
+ app.get('/endGame', function(request, response){
+    db.endgame(request.query.id, function(err, res){
+        if(err != null) response.render('error', { message: "Error EndGame", error : err});
+        if(res) response.redirect('/mainBoard');
+    }); 
+ });
+ 
+ 
 
-    conexion.connect(function(err) {
-        if (err) {
-            callback(err);
-        } else {
-            conexion.query("SELECT c.Nombre, c.Apellidos, COUNT(tc.Correo) AS NumCorreos " +
-                           "FROM Contactos c LEFT JOIN Tiene_correo tc ON c.Id = tc.Id " +
-                           "GROUP BY c.Id",
-            function(err, result) {
-                conexion.end();
-                callback(null, result);
-            });
-        }
-    });
-}
-
-devolverContactos(function(err, result) {
-    if (!err) {
-        result.forEach(function(u) {
-            console.log(`Nombre: ${u.username} ${u.apellidos}. password: ${u.password}`);
-        });
-    }
-});
-*/
 
 conexion.connect(function(err) {      
     if (err) {         
@@ -128,77 +150,26 @@ conexion.connect(function(err) {      
          
       } });
     
-   /* 
-    function consultaBD(callback) {    
-          var conexion = mysql.createConnection({   
-                   host: "localhost",        
-              user: "root", password: "",        
-              database: "miBD"      });
-                  conexion.connect(function(err) {   
-                 if (err) { callback(err); 
-            }  else {         
-                 conexion.query(      
-                      "SELECT Nombre, Apellidos, COUNT(tc.Correo) as NumCorreos "  
-                        +  "FROM Contactos c LEFT JOIN Tiene_Correo tc ON c.Id = tc.Id "  +
-                         "GROUP BY c.id",          
-                  function(err, rows) {              
-                        callback(null, rows);   
-                             });       
-                 }      });
-      }
-          */  
-            
+  
           
-            var servidor = http.createServer(function(request, response) { 
-                    consultaBD(function(err, filasBD) {    
-                          if (err) {         
-                             console.error(err);      
-                             response.statusCode = 500;     
-                             } else {          
-                            response.statusCode = 200;
-                                      devolverPagina(response, filasBD);
-                                  }      });
-                  });
-           
-         function devolverPagina(response, filasBD) {     
-                 response.write('<html>');    
-                  response.write('<head>');   
-                   response.write('<title>Base de datos de teléfonos</title>' );   
-                   response.write('<meta charset="utf­8">');  
-                   response.write('<style>th, td { border: 1px solid }</style>' );    
-                  response.write('</head>');   
-                   response.write('<body>');    
-                  response.write('<table>');    
-                  response.write('<tr><th>Nombre</th><th>Apellidos</th>'  +    
-                                  '<th>Número direcciones</th></tr>');   
-                   filasBD.forEach(function(fila) {      
-                        response.write('<tr>');        
-                      response.write(`<td>${fila.username}</td>`);       
-                       response.write(`<td>${fila.apellidos}</td>`);      
-                        response.write(`<td>${fila.password}</td>`);   
-                           response.write('</tr>');  
-                        });    
-                  response.write('</table>');   
-                   response.write('</body>');   
-                   response.end(); 
-            }
-            
-            
-            app.get('/index.html',function(req,res){
-               res.sendfile("index.html"); 
+        
+ app.get('/index.html',function(req,res){
+              res.sendfile("index.html"); 
              
             });
 
              
-             app.post("index.html", function(request, response) {
+    app.post("index.html", function(request, response) {
     console.log(request.body);
     response.end("index.html");
    // response.end();
 });
              
-             app.listen(config.port, function() {
+    app.listen(config.port, function() {
     console.log("Escuchando en el puerto 3000");
 });
+
+module.exports = app;
 
 /*
         app.post("/procesar_formulario", function(request, response) {
