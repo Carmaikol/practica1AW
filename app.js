@@ -34,13 +34,6 @@ var servidor = http.createServer(function(request, response) {   
 */
 
 
-var datosConexion = {
-    host: config.dbHost,
-    user: config.dbUser,
-    password: config.dbPassword,
-    database: config.dbName
-};
- var conexion = mysql.createConnection(datosConexion);
  
  
  
@@ -49,7 +42,7 @@ var datosConexion = {
       db.login(request.body, function(err, res){
           if(err != null) response.render('error', { message:"Error Login", error:err});
           if(res) {
-              db.loadPhoto(request.body.user, function(err, auxPhoto){
+              db.loadphoto(request.body.user, function(err, auxPhoto){
                    if(err != null) response.render('error', { message:"Error Login", error:err});
                    else {
                        if(auxPhoto.lenght === 1) {
