@@ -1,5 +1,5 @@
 var mysql = require("mysql");
-
+var config = require("./config");
 
 var datosConexion = {
     host: config.dbHost,

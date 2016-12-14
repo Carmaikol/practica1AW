@@ -10,18 +10,18 @@ var http =  require("http");
 var path = require("path");
 var config = require("./config");
 var db = require ("./db");
+var fs = require('fs');
 
-
-var uploads = muter({
+var uploads = multer({
     dest: 'public/uploads/'
 });
 
 var app = express();
 
 app.set("view engine", "ejs");
-//app.set("views", path.join(__dirname, "views"));
+app.set("views", "views");
 
-//app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("public"));
 //app.use(bodyParser.text({ type: "*/*" }));
 
 /*
@@ -34,16 +34,13 @@ var servidor = http.createServer(function(request, response) {   
 */
 
 
- 
- 
- 
  //LOGIN
   app.post("/login",  function(request, response){
       db.login(request.body, function(err, res){
-          if(err != null) response.render('error', { message:"Error Login", error:err});
+          if(err !== null) response.render('error', { message:"Error Login", error:err});
           if(res) {
               db.loadphoto(request.body.user, function(err, auxPhoto){
-                   if(err != null) response.render('error', { message:"Error Login", error:err});
+                   if(err !== null) response.render('error', { message:"Error Login", error:err});
                    else {
                        if(auxPhoto.lenght === 1) {
                            response.render('MainWindow', {
@@ -59,13 +56,13 @@ var servidor = http.createServer(function(request, response) {   
                    }
               });
           }else
-              response.render('error', { message: "Wrong password!", error = null});
+              response.render('error', { message: "Wrong password!", error: null});
           
       });
  });
  
  //SIGNUP
- app.post("/signup", upload.single('file'), function(request, response){
+ app.post("/signup", uploads.single('file'), function(request, response){
      var aux = {};
      if(request.file !== undefined){
          var auxFile = request.file.path + "." + request.file.mimetype.substr(6);
@@ -75,9 +72,9 @@ var servidor = http.createServer(function(request, response) {   
             } 
          });
          
-          aux.foto = request.file.filename + "." + request.file.mimetype.substr(6);
+          aux.photo = request.file.filename + "." + request.file.mimetype.substr(6);
      }else {
-         aux.foto = null;
+         aux.photo = null;
      }
      
      aux.username = request.body.username;
@@ -86,7 +83,7 @@ var servidor = http.createServer(function(request, response) {   
      aux.gender = request.body.gender;
      aux.birthdate = request.body.birthdate;
      db.signup(aux, function(err, res){
-         if(err != null) response.render('error', { message: "Error SignUp", error : err});
+         if(err !== null) response.render('error', { message: "Error SignUp", error : err});
          if(res) response.redirect('/');
      });
      
@@ -97,7 +94,7 @@ var servidor = http.createServer(function(request, response) {   
  //CREATE GAME
   app.get('/createGame', function(request, response){
     db.creategame(request.query, function(err, res){
-        if(err != null) response.render('error', { message: "Error CreateGame", error : err});
+        if(err !== null) response.render('error', { message: "Error CreateGame", error : err});
         if(res) response.redirect('/');
     }); 
  });
@@ -105,7 +102,7 @@ var servidor = http.createServer(function(request, response) {   
  //JOIN GAME
  app.get('/joinGame',function(request, response){
     db.join(request.query, function(err, res){
-        if(err != null) response.render('error', { message: "Error JoinGame", error : err});
+        if(err !== null) response.render('error', { message: "Error JoinGame", error : err});
         if(res) response.redirect('/mainBoard');
     }); 
  });
@@ -113,48 +110,20 @@ var servidor = http.createServer(function(request, response) {   
  //ENDGAME
  app.get('/endGame', function(request, response){
     db.endgame(request.query.id, function(err, res){
-        if(err != null) response.render('error', { message: "Error EndGame", error : err});
+        if(err !== null) response.render('error', { message: "Error EndGame", error : err});
         if(res) response.redirect('/mainBoard');
     }); 
  });
- 
- 
 
-
-conexion.connect(function(err) {      
-    if (err) {         
-         console.log("Error al realizar la conexión: " + err);     
-    }else {    
-          // ... realizar consulta ...   
-    
-        conexion.query("SELECT username, apellidos  " +
-                           "FROM users c " ,
-            function(err, result) {
-                var row = result[0];
-                var res = { nombre: row.username, apellidos: row.apellidos };
-                console.log(res);
-                conexion.end();
-                //callback(null, res);
-            });
+ app.get('/login.html',function(req,res){
+              res.sendfile("login.html"); 
             
-      
-            
-        
-         
-      } });
-    
-  
-          
-        
- app.get('/index.html',function(req,res){
-              res.sendfile("index.html"); 
-             
             });
 
              
-    app.post("index.html", function(request, response) {
+    app.post("login.html", function(request, response) {
     console.log(request.body);
-    response.end("index.html");
+    response.end("login.html");
    // response.end();
 });
              
