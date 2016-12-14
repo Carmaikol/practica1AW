@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="css/internal.css"/>
+	<title> Saboteur </title>
+    </head>
+    
+    <body id="joinGame">
+		<div id="content">
+                    <h1> Join Game <h1>
+			
+                    <table>
+			<tr><th>Name</th><th>Players</th><th>Max Players</th><th>Date</th><th></th></tr>
+			<% for (aux: games) { 
+				var i = 0;
+				while (i < players.length) {
+                                    if (players[i].id === aux.id && players[i].id !== status) { 
+					if (aux.active ) { %>				
+                                            <tr><td><%=aux.name %></td> <td><%=players[i].id%></td>   <td>1/<%=aux.max_players%></td>
+                                             <td><%=aux.date%></td>
+				<td><a href="/joinGame?id=<%=aux.id%>&id_player=<%=status%>"> Join </a></td> </tr>
+					<%} 
+                                    }
+                                    i++;
+                                }
+				if (games.length === i) {
+                                    if (aux.active) { %>				
+					<tr><td><%=aux.name %></td> <td><%=aux.date%></td> <td>1/<%=aux.max_players%></td>
+					<td>No one is playing</td>
+				<td><a href="/unirsePartida?id_partida=<%=partida[i].ID%>&id_jug=<%=status%>">Unirse</a></td></tr>
+					<%} 
+                                    }
+				} %>
+		</table>
+	</div>
+    </body>
+</html>
+

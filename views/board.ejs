@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <meta charset="utf-8"/>
+        <link rel "stylesheet" href="css/saboteur.css" media="screen" />
+        
+        <title> Saboteur </title>
+    </head>
+    
+<body>
+    <h1> Hola, <%= status %></h1>
+  
+  <div id="pendingGames">
+        <h2> Pending games </h2>
+        <table>
+            <tr><th>Username</th><th>Number of Players</th><th>Date</th><th></th></tr>
+            <% for(aux : games){
+                    if(aux.id_creator === status && aux.active) { %>
+             <tr><td><%=aux.username%></td><td>1/<%=aux.max_users%></td><td><%=aux.date%></td>
+             <td><a href="javascript: closegame(<%=aux.id%>)">Close game</a></td></tr>
+             <% }
+            }%>
+        </table>
+    </div>
+
+  <div id="activeGames">
+        <h2> Active games </h2>
+        <table>
+            <tr><th>Username</th><th>Creator</th><th>Date</th><th>Date</th><th>Turn</th></tr>
+            <% for(aux : players){
+                    if(aux.id === status ) { 
+                            var i = 0, inList = false
+                                while(i < games.length && !inList){
+                                    if(aux.id_game == games[i].id)
+                                        inList= true;
+                                    else
+                                        i++;
+                             }
+
+                    if(games[i].active) { %>
+                         <tr><td><%=games[i].name%></td><td>1/<%=games[i].id_creator%></td><td><%=games[i].date%></td>
+             <td><%=aux.turn%></td></tr>
+             <% }
+            }%>
+<% } %>
+        </table>
+    </div>
+
+
+  <div id="finishedGames">
+        <h2> Finished games </h2>
+        <table>
+            <tr><th>Name</th><th>Creator</th><th>Won?</th><th></th></tr>
+            <% for(aux : games){
+                    if(!aux.active) { 
+                        if(aux.id_winner) === status) { %>
+             <tr><td><%=aux.username%></td><td>1/<%=aux.id_creator%></td><td>Yes!</td>
+                <%}else{ %> 
+            <tr><td><%=aux.username%></td><td>1/<%=aux.id_creator%></td><td>No</td>
+             <% } }
+            }%>
+        </table>
+    </div>
+    
+
+</body>
+</hmtl>
+
