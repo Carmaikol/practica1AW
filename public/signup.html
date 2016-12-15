@@ -3,49 +3,39 @@
 <html>
 
 	<head>
-	
-		<meta charset="utf-8"/>
-		<link rel="stylesheet" href="css/Programomikon.css" media="screen"/>
-		<title>
-			Saboteur
-		</title>
+	<meta charset="utf-8"/>
+	<link rel="stylesheet" href="css/Programomikon.css" media="screen"/>
+	<title> Saboteur </title>
 	</head>
     
     <body>
-        <header id="top">
-                <div id="imageTop">
+        <header id="topbar">
+            <div id="imagetopbar">
                     <a href="index.html"><img class="top" src="img/logo.png"/></a>
-                </div>
-                <div id="textTop">
-                    No hay usuario conectado
-                </div>	
+            </div>
+               
         </header>
-                <div id="midText">
-                    <div id="select">
-                            <button class="button" onclick="window.location.href='login.html'">Login</button>
-                            <button class="button" onclick="window.location.href='signup.html'">Nuevo Usuario</button>  
-                    </div>
+                <div id="buttons">
+                    
+                     <button class="button" onclick="window.location.href='login.html'"> Login </button>
+                    <button class="button" onclick="window.location.href='signup.html'"> Sign Up </button>  
+                   
+                 </div>
 
-                </div>
-
-				<div id="welcome">
-					<h1> Nuevo usuario </h1>
-					Introduce tus datos de minero. Los campos marcados con diamante rojo (*) son obligatorios:
-					
-					<form method="post" action="/signup" enctype="multipart/form-data">
-						<table>
-							<tr><td>Nombre de usuario:* </td><td><input type="text" name="nick" required> </td>
-							<tr><td>Contraseña:*</td><td> <input type="password" name="pass" required> </td> </tr>
-							<td>Nombre completo:* </td><td> <input type="text" name="nombre" required></td></tr>
-							<td>Sexo:* </td><td> <input type="radio" name="sexo" value='0' required>Elfo
-							<input type="radio" name="sexo" value='1' required> Elfa</td></tr>
-							<td>Foto: </td><td> <input type="file" name="file" ></td></tr>
-							<td>Fecha Nacimiento: </td><td> <input type="date" name="fecha"></td></tr>
-							</table>
-							<div id="Error"></div>
-							<p><input type="submit" value="Crear cuenta" /></p>
-						</form>
-				</div>
+                    <div id="signupform">
+                         <form method="post" action="/signup" enctype="multipart/form-data">
+                            <table>
+                                <tr><td>Username:* </td><td><input type="text" name="username" required> </td>
+                                <tr><td>Password:*</td><td> <input type="password" name="pass" required> </td> </tr>
+                                <td>Full Name:* </td><td> <input type="text" name="fullname" required></td></tr>
+                                <td>Gender:* </td><td> <input type="radio" name="gender" value='0' required>Male
+                                <input type="radio" name="gender" value='1' required> Female</td></tr>
+                                <td>Photo: </td><td> <input type="file" name="file" ></td></tr>
+                                <td>Birth Date: </td><td> <input type="date" name="birthdate"></td></tr>
+                            </table>
+                                <p><input type="submit" value="signup" /></p>
+                        </form>
+                                </div>
     </body>
 </html>
 

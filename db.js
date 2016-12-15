@@ -13,17 +13,19 @@ var datosConexion = {
  
  
  //LOGN
-var login = function(auxUser, result) {
+var login = function(auxUserName,auxPass, result) {
    conexion.connect(function(err){
        if(err) result(err, false);
        else{
            //REPASAR ESTA SHIT
-           conexion.query("SELECT * FROM USERS WHERE USERNAME= '"+auxUser.username +
-                   "' AND PASSWORD='" + auxUser.password + "'"
+             console.log(" login HASTA AQUI LLEGO");
+           conexion.query("SELECT * FROM users WHERE username='"+ auxUserName +
+                   "' AND password='" + auxPass + "'"
                   , function(error, res) {
                        if(error) result(error,false);
                           else {
-                           
+                             console.log(" loginHASTA NO AQUI LLEGO   user: " + auxUserName + " pass: " + auxPass   );
+                             conexion.commit()
                             conexion.end();
                             if(res.length === 1) result(null,true);
                             else result(null,false);
@@ -39,12 +41,14 @@ var signup = function(auxUser, result) {
        if(err) result(err, false);
        else{
            //REPASAR ESTA SHIT
-           conexion.query("INSERT INTO USERS VALUES('"+auxUser.username +
-                   "'," + auxUser.password + "'," + auxUser.fullname +
-                   "'," + auxUser.gender + "'," + auxUser.photo + "'," + auxUser.birthdate 
+           console.log("HASTA AQUI LLEGO");
+           conexion.query("INSERT INTO users VALUES('"+auxUser.username +
+                   "','" + auxUser.pass + "','" + auxUser.fullname +
+                   "','" + auxUser.gender + "','" + auxUser.photo + "','" + auxUser.birthdate 
                    +"')", function(error, res) {
                        if(error) result(error,false);
                           else {
+                                console.log("HASTA AQUI NO LLEGO");
                             conexion.commit();
                             conexion.end();
                             result(null,true);
@@ -65,9 +69,8 @@ var creategame = function(auxGame, result) {
        if(err) result(err, false);
        else{
            //REPASAR ESTA SHIT
-           conexion.query("INSTERT INTO GAME (ID_CREATOR, NAME, N_PLAYERS, TURNS_LEFT) VALUES ('"
+           conexion.query("INSTERT INTO game (id_creator, name , n_players, turns_left) VALUES ('"
                    + auxGame.id_creator + "','" + auxGame.name + "','" + auxGame.n_players + "','" + auxGame.turns_left + "')"
-         
                   , function(error, res) {
                        if(error) result(error,false);
                           else {
@@ -94,10 +97,10 @@ var joingame = function(auxRole, result) {
        if(err) result(err, false);
        else{
            //REPASAR ESTA SHIT
-  conexion.query("INSTERT INTO ROLES (ID_PLAYER, ID_GAME, ROL, TURN) VALUES ('"
-                   + auxRole.id_player + "','" + auxRole.id_game + "', '0'"  + "','" + auxRole.turn + "')"
-                   + "ON DUPLICATE KEY UPDATE ID_PLAYER='" + auxRole.id_player + "', ID_GAME='" + auxRole.id_game
-                   + "', TURN='" + auxRole.turn         
+  conexion.query("INSTERT INTO roles (id_player, id_game, role, turn) VALUES ('"
+                   + auxRole.id_player + "','" + auxRole.id_game + "', '0' ,'" + auxRole.turn + "')"
+                   + "ON DUPLICATE KEY UPDATE id_player='" + auxRole.id_player + "', id_game='" + auxRole.id_game
+                   + "', turn='" + auxRole.turn         
                   , function(error, res) {
                        if(error) result(error,false);
                           else {
@@ -180,10 +183,12 @@ var loadphoto = function(auxRole, result) {
        if(err) result(err, false);
        else{
            //REPASAR ESTA SHIT
-         conexion.query("SELECT PHOTO FROM USERS WHERE USERNAME ='" + auxRole +"'"
+           console.log("Llego aqui photo");
+         conexion.query("SELECT photo FROM users WHERE username ='" + auxRole +"'"
                   , function(error, res) {
                        if(error) result(error,false);
-                          else {             
+                          else {         
+                              console.log("Llego 2aqui photo");
                           conexion.end();
                          result(null,res);
                             

@@ -11,6 +11,7 @@ var path = require("path");
 var config = require("./config");
 var db = require ("./db");
 var fs = require('fs');
+var ejs = require('ejs');
 
 var uploads = multer({
     dest: 'public/uploads/'
@@ -18,8 +19,8 @@ var uploads = multer({
 
 var app = express();
 
-app.set("view engine", "ejs");
-app.set("views", "views");
+app.set("view engine", 'ejs');
+app.set("views", path.join(__dirname,'views'));
 
 app.use(express.static("public"));
 //app.use(bodyParser.text({ type: "*/*" }));
@@ -36,27 +37,32 @@ var servidor = http.createServer(function(request, response) {   
 
  //LOGIN
   app.post("/login",  function(request, response){
-      db.login(request.body, function(err, res){
+        console.log("Llego aqui login 1    request: " + request  + "  " + request.form  + "  "  );
+      db.login(request.body.username, request.pass, function(err, res){
           if(err !== null) response.render('error', { message:"Error Login", error:err});
           if(res) {
-              db.loadphoto(request.body.user, function(err, auxPhoto){
+              db.loadphoto(request.username, function(err, auxPhoto){
                    if(err !== null) response.render('error', { message:"Error Login", error:err});
                    else {
+                       console.log("Llego aqui login 1");
                        if(auxPhoto.lenght === 1) {
                            response.render('MainWindow', {
-                               status: request.body.user,
+                               status: request.username,
                                photo: auxPhoto[0].PHOTO
                            });
                        }else{
+                           console.log("Llego aqui login 2");
                            response.render('MainWindow', {
-                               status: request.body.user,
+                               status: request.username,
                                photo: null
                            });
                        }
                    }
               });
-          }else
+          }else{
+              console.log("Llego aqui login error");
               response.render('error', { message: "Wrong password!", error: null});
+          }
           
       });
  });
