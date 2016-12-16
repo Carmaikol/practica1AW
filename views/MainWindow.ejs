@@ -10,14 +10,13 @@
     
     <body onload="changePrincipal(1)">
         <header id="topbar">
-
                 <div id="imagetopbar" >
                     <a href="javascript:changePrincipal(1)"> <img class="topbar" src="img/logo.png"/></a>
                 </div>
 
                 <div id="texttopbar">
-		<% if (foto !== null) { %>
-					<img width="50" height="50" src="uploads/<%= photo %>"/>
+		<% if (photo !== null) { %>
+		<img width="50" height="50" src="uploads/<%= photo %>"/>
                     <%} %>
                 <%= status %>
                 </div>	

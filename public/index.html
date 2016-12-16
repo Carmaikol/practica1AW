@@ -3,6 +3,7 @@
 
 	<head>
 	 <meta charset="utf-8"/>
+         
             <link rel="stylesheet" href="css/style.css" media="screen"/>
             <title> Saboteur </title>
 	</head>
@@ -20,8 +21,8 @@
                     </div>
 
                 </div>
-            <div id="welcome">
-		<form  method="post" action="/login" enctype="multipart/form-data">
+            <div id="welcome">            
+		<form  name="loginform" method="post" action="/login">
                     <p> User <br> <input type="text" name="username" required> </p>
                     <p> Password <br> <input type="password" name="pass" required> </p>
                     <input  type="submit"  value="login" />

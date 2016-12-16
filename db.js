@@ -13,19 +13,19 @@ var datosConexion = {
  
  
  //LOGN
-var login = function(auxUserName,auxPass, result) {
+var login = function(auxUser, result) {
    conexion.connect(function(err){
        if(err) result(err, false);
        else{
            //REPASAR ESTA SHIT
              console.log(" login HASTA AQUI LLEGO");
-           conexion.query("SELECT * FROM users WHERE username='"+ auxUserName +
-                   "' AND password='" + auxPass + "'"
+           conexion.query("SELECT * FROM users WHERE username='"+ auxUser.username +
+                   "' AND password='" + auxUser.pass + "'"
                   , function(error, res) {
                        if(error) result(error,false);
                           else {
-                             console.log(" loginHASTA NO AQUI LLEGO   user: " + auxUserName + " pass: " + auxPass   );
-                             conexion.commit()
+                             console.log(" loginHASTA NO AQUI LLEGO   user: " +  auxUser.username + " pass: " +  auxUser.pass  );
+                            
                             conexion.end();
                             if(res.length === 1) result(null,true);
                             else result(null,false);

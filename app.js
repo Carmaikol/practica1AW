@@ -12,6 +12,9 @@ var config = require("./config");
 var db = require ("./db");
 var fs = require('fs');
 var ejs = require('ejs');
+var bodyparser = require('body-parser');
+var jsonParser = bodyparser.json();
+var urlencodedParser = bodyparser.urlencoded({ extended: false })
 
 var uploads = multer({
     dest: 'public/uploads/'
@@ -19,11 +22,14 @@ var uploads = multer({
 
 var app = express();
 
-app.set("view engine", 'ejs');
-app.set("views", path.join(__dirname,'views'));
-
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname,'views'));
+//app.use(bodyparser.json({ type: 'application/*+json' }));
+//app.use(bodyparser.text({ type: "*/*" }));
+//app.use(bodyparser.urlencoded({ extended: true }));
+app.use(bodyparser());
 app.use(express.static("public"));
-//app.use(bodyParser.text({ type: "*/*" }));
+//app.use(bodyparser.text({ type: "*/*" }));
 
 /*
 var servidor = http.createServer(function(request, response) {   
@@ -37,8 +43,11 @@ var servidor = http.createServer(function(request, response) {   
 
  //LOGIN
   app.post("/login",  function(request, response){
-        console.log("Llego aqui login 1    request: " + request  + "  " + request.form  + "  "  );
-      db.login(request.body.username, request.pass, function(err, res){
+         var aux = {}; 
+         aux.username = request.body.username;
+         aux.pass = request.body.pass;
+      //  console.log("Llego aqui login 1    request: " + request.document.loginform.username.value  + "  " + request.document.loginform.pass.value  + "  "  );
+      db.login(aux, function(err, res){
           if(err !== null) response.render('error', { message:"Error Login", error:err});
           if(res) {
               db.loadphoto(request.username, function(err, auxPhoto){
@@ -47,13 +56,13 @@ var servidor = http.createServer(function(request, response) {   
                        console.log("Llego aqui login 1");
                        if(auxPhoto.lenght === 1) {
                            response.render('MainWindow', {
-                               status: request.username,
+                               status: aux,
                                photo: auxPhoto[0].PHOTO
                            });
                        }else{
                            console.log("Llego aqui login 2");
                            response.render('MainWindow', {
-                               status: request.username,
+                               status: aux,
                                photo: null
                            });
                        }
