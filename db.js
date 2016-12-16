@@ -27,8 +27,11 @@ var login = function(auxUser, result) {
                              console.log(" loginHASTA NO AQUI LLEGO   user: " +  auxUser.username + " pass: " +  auxUser.pass  );
                             
                             conexion.end();
-                            if(res.length === 1) result(null,true);
-                            else result(null,false);
+                            if(res.length === 1) {
+                                 console.log(" loginHASTA NO " + res + "   user: " +  auxUser.username + " pass: " +  auxUser.pass  );
+                                result(null,true);
+                        }
+                        else {result(null,false);}
                            } 
                         });
                      }
@@ -180,11 +183,13 @@ var playerlist = function(auxRole, result) {
         
 var loadphoto = function(auxRole, result) {
    conexion.connect(function(err){
-       if(err) result(err, false);
+       if(err) {
+           console.log("ERROR CONEXION EN PHOTO")
+           result(err, false);}
        else{
            //REPASAR ESTA SHIT
            console.log("Llego aqui photo");
-         conexion.query("SELECT photo FROM users WHERE username ='" + auxRole +"'"
+         conexion.query("SELECT photo FROM users WHERE username ='" + auxRole.username +"'"
                   , function(error, res) {
                        if(error) result(error,false);
                           else {         

@@ -50,8 +50,8 @@ var servidor = http.createServer(function(request, response) {   
       db.login(aux, function(err, res){
           if(err !== null) response.render('error', { message:"Error Login", error:err});
           if(res) {
-              db.loadphoto(request.username, function(err, auxPhoto){
-                   if(err !== null) response.render('error', { message:"Error Login", error:err});
+              db.loadphoto(aux, function(err, auxPhoto){
+                   if(err !== null) response.render('error', { message:"Error Login Photo", error:err});
                    else {
                        console.log("Llego aqui login 1");
                        if(auxPhoto.lenght === 1) {
