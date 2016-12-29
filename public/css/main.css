@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Merriweather');
+
+body{
+    font-family: 'Open Sans', sans-serif;
+    background:  url("../img/wallpaper1.png") repeat;
+    font-color: white;
+    color: white;
+}
+
+
+#topbartext{
+    position: absolute;
+    right: 20px;
+    top: 60px;
+    font-style: oblique;
+    font-size: 24pt;
+    color: #FFFFFF;
+    font-family: calibri;
+}
+
+#top{     
+    margin-button:0px;
+}
+
+#topbar{
+    margin-left: 30%;
+    margin-button:10px;  
+}
+#middle{
+    margin-top:18px;	
+}
+
+#principal { 
+    top: 50%; 
+    left: 50%; 
+    background-color: rgba(48, 48, 48, 0.7);
+    border-radius: 24px;
+    border: 1px solid #000000;
+    margin-left: 20%;
+    margin-right: 20%;
+    margin-top: 10px;
+    padding: 15px; 
+    width: auto;
+    height: auto; 
+    color: white;
+}
+
+
+h2{
+    font-size: 12pt;
+    color: #22AA22;
+}
+
+#buttoncontainer{
+    font-size:12pt;
+    margin-left: 30%;
+    color: #888888;
+}
+
+.button {
+    width: 190px;
+    padding:5px;
+    text-align:center;
+    font-size:14pt;
+    margin-left:10px;
+    border: 1px solid black;
+    background:#CCCCCC;
+    cursor:pointer;
+    font-family: 'Merriweather', cursive;
+}
+
+input[type="submit"] {
+    color: black;
+    text-align: center;
+    padding: 3px 12px;
+    display: inline-block;
+    cursor: pointer;
+}
+
+input {
+    border: 2px solid black; 
+    padding: 3px;
+    background: rgba(255,255,255,0.7);
+}
+
+
+
+
+
+

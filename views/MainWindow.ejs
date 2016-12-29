@@ -1,34 +1,41 @@
 <!DOCTYPE html>
 <html>
 
-    <head>
-	<meta charset="utf-8"/>
-	<link rel="stylesheet" href="css/MainWindow.css" media="screen"/>
-	<title> Saboteur </title>
-	<script src="js/MainWindow.js"></script>
+	<head>
+            <meta charset="utf-8"/>
+            <link rel="stylesheet" href="css/main.css" media="screen"/>
+            <title> Saboteur </title>
+            <script src="js/MainWindow.js"></script>
 	</head>
     
-    <body onload="changePrincipal(1)">
+    <body onload="changeToTab(1)">
+        
         <header id="topbar">
-                <div id="imagetopbar" >
-                    <a href="javascript:changePrincipal(1)"> <img class="topbar" src="img/logo.png"/></a>
-                </div>
 
-                <div id="texttopbar">
+            <div id="topbartext">
 		<% if (photo !== null) { %>
 		<img width="50" height="50" src="uploads/<%= photo %>"/>
-                    <%} %>
-                <%= status %>
-                </div>	
-        </header>
+		<%} %>  
+                                <%= status %>
+            </div>	
+            
+            <div id="imagetopbar" > <a href="javascript:changeToTab(1)"><img class="top" src="img/logo.png"/></a> </div>
         
-        <div id="welcomeText">
-               <div id="select">
-                    <button class="button" onclick="changePrincipal(0)">Log Out</button>
-                    <button class="button" onclick="changePrincipal(2)">Join Game</button>
-                    <button class="button" onclick="changePrincipal(3)">Close Game</button>						
-                </div>
-         </div>
+        </header>
+
+        <div id="middle">
+
+            <div id="buttoncontainer">
+                <button class="button" onclick="changeToTab(0)"> Disconnect </button>
+                <button class="button" onclick="changeToTab(2)"> Join Game </button>
+                <button class="button" onclick="changeToTab(3)"> Create Game </button>						
+            </div>
+
+        </div>
+
+	<div id="principal">
+				
+	</div>
+
     </body>
 </html>
-

@@ -1,20 +1,44 @@
-<!DOCTYPE html>
-
+﻿<!DOCTYPE html>
 <html>
+
     <head>
 	<meta charset="utf-8"/>
-	<link rel="stylesheet" href="css/style.css"  media="screen"/>
-		<title> Saboteur </title>
-        <script src="js/game.js"></script>
+	<link rel="stylesheet" href="css/inner.css" media="screen"/>
+	<title> Saboteur </title>
+	<script src="js/inner.js"></script>
     </head>
+    
     <body>
         <h1> Game: <%= game.name %></h1>
-		<div id="gameinfo">
-			<p>Players: <%=players.id_player%></p>
-			<p>Turno de: <%=players.turn%></p>         
-			<p>Turnos restantes: <%= game.turns %></p>
-                        <p>Creada por: <%= game.id_creator %></p>
+
+		<div id="info">
+
+                    <p>Created by: <%= game.id_creator %> </p>
+                    <p>Players: <%=playersInGame.id_player%> </p>
+                    <p>Turn: <%=playersInGame.turn%> </p>
+                    <p>Turns left: <%= game.turns_left %> </p>
+
 		</div>
 
+		<div id="board">
+
+                    <h2> Board </h2>
+
+                    <table>
+                            <% for (f = 0; f < game.rows; f++) { %>
+			<tr>
+                            <% for (c = 0; c < game.columns; c++) {  %>				
+                                <td> <img src="img/T2.png"> </td>
+                                <% } %>
+			</tr>
+                            <% } %>
+                    </table>
+		</div>
+
+		<div id="cards">
+
+			<h2> Cards </h2>
+		</div>
     </body>
+
 </html>

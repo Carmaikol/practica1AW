@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="css/inner.css"/>
+                <title> Saboteur </title>
+    </head>
+    
+    <body id="join">
+        
+	<div id="content">
+	<h1> Create a game </h1>
+            <form method="post" action="/creategame">
+                <table id="creategametable">
+                    
+                    <tr> <td id="creategametable"> Name </td> <td id="creategametable"> <input type="text" name="name"/> </td> </tr>
+                    <tr> <td id="creategametable"> Max Players </td> <td id="creategametable"> <input type="number" name="max_players" min="3" max="7"/> </td> </tr>
+                    <tr> <td id="creategametable"> </td><td id="creategametable"> <input type="submit" value="Create game"/> </td> </tr>
+                    
+                </table>
+            </form>
+	</div>
+        
+    </body>
+    
+    
+</html>

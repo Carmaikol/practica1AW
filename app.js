@@ -1,180 +1,256 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-var multer = require('multer');
-var mysql = require("mysql");
-var express = require("express");
-var http =  require("http");
-var path = require("path");
-var config = require("./config");
-var db = require ("./db");
-var fs = require('fs');
-var ejs = require('ejs');
-var bodyparser = require('body-parser');
-var jsonParser = bodyparser.json();
-var urlencodedParser = bodyparser.urlencoded({ extended: false })
+//Miguel Aguilera Zorzo    05450952K
 
-var uploads = multer({
-    dest: 'public/uploads/'
-});
+
+var express = require('express');
+var db = require('./db');
+var fs = require('fs');
+var path = require('path');
+var multer = require('multer');
+
+var config = require('./config');
+
+var cookieParser = require('cookie-parser');
+var bodyParser = require('body-parser');
+
+
+var upload = multer({dest: 'public/uploads/'});
 
 var app = express();
 
+// view engine setup
+app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname,'views'));
-//app.use(bodyparser.json({ type: 'application/*+json' }));
-//app.use(bodyparser.text({ type: "*/*" }));
-//app.use(bodyparser.urlencoded({ extended: true }));
-app.use(bodyparser());
-app.use(express.static("public"));
-//app.use(bodyparser.text({ type: "*/*" }));
 
-/*
-var servidor = http.createServer(function(request, response) {   
-       console.log(`Método: ${request.method}`); 
-        console.log(`URL: ${request.url}`);
-          console.log(request.headers);  
-});
+//Better body data managing
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static('public'));
 
-*/
+var rules = require('./rules');
 
 
- //LOGIN
-  app.post("/login",  function(request, response){
-         var aux = {}; 
-         aux.username = request.body.username;
-         aux.pass = request.body.pass;
-      //  console.log("Llego aqui login 1    request: " + request.document.loginform.username.value  + "  " + request.document.loginform.pass.value  + "  "  );
-      db.login(aux, function(err, res){
-          if(err !== null) response.render('error', { message:"Error Login", error:err});
-          if(res) {
-              db.loadphoto(aux, function(err, auxPhoto){
-                   if(err !== null) response.render('error', { message:"Error Login Photo", error:err});
-                   else {
-                       console.log("Llego aqui login 1");
-                       if(auxPhoto.lenght === 1) {
-                           response.render('MainWindow', {
-                               status: aux,
-                               photo: auxPhoto[0].PHOTO
-                           });
-                       }else{
-                           console.log("Llego aqui login 2");
-                           response.render('MainWindow', {
-                               status: aux,
-                               photo: null
-                           });
-                       }
-                   }
-              });
-          }else{
-              console.log("Llego aqui login error");
-              response.render('error', { message: "Wrong password!", error: null});
-          }
-          
-      });
- });
- 
- //SIGNUP
- app.post("/signup", uploads.single('file'), function(request, response){
-     var aux = {};
-     if(request.file !== undefined){
-         var auxFile = request.file.path + "." + request.file.mimetype.substr(6);
-         fs.rename(request.file.path, auxFile, function(err){
-            if(err){
-                response.render('error', { message:"Error SignUp", error:err});
-            } 
-         });
-         
-          aux.photo = request.file.filename + "." + request.file.mimetype.substr(6);
-     }else {
-         aux.photo = null;
-     }
-     
-     aux.username = request.body.username;
-     aux.pass = request.body.pass;
-     aux.fullname = request.body.fullname;
-     aux.gender = request.body.gender;
-     aux.birthdate = request.body.birthdate;
-     db.signup(aux, function(err, res){
-         if(err !== null) response.render('error', { message: "Error SignUp", error : err});
-         if(res) response.redirect('/');
-     });
-     
-    
- 
- });
- 
- //CREATE GAME
-  app.get('/createGame', function(request, response){
-    db.creategame(request.query, function(err, res){
-        if(err !== null) response.render('error', { message: "Error CreateGame", error : err});
-        if(res) response.redirect('/');
-    }); 
- });
- 
- //JOIN GAME
- app.get('/joinGame',function(request, response){
-    db.join(request.query, function(err, res){
-        if(err !== null) response.render('error', { message: "Error JoinGame", error : err});
-        if(res) response.redirect('/mainBoard');
-    }); 
- });
- 
- //ENDGAME
- app.get('/endGame', function(request, response){
-    db.endgame(request.query.id, function(err, res){
-        if(err !== null) response.render('error', { message: "Error EndGame", error : err});
-        if(res) response.redirect('/mainBoard');
-    }); 
- });
-
- app.get('/login.html',function(req,res){
-              res.sendfile("login.html"); 
+//Login
+app.post("/login", function(req, res) {
+    db.login(req.body, function(err, results) {
+        if (err !== null)
+            res.render('error', {message: "Error!",error: err});        
+        if (results !== null) {
             
-            });
-
-             
-    app.post("login.html", function(request, response) {
-    console.log(request.body);
-    response.end("login.html");
-   // response.end();
+            var minute = 360 * 1000;
+            res.cookie('username', req.body.username, { maxAge: minute });
+            if (results.photo !== null) {
+                res.cookie('photo', results.photo, { maxAge: minute });
+                res.render('MainWindow', {status: req.body.username, 
+                    photo: results.photo});
+            }
+            else {
+                res.cookie('photo', null, { maxAge: minute });
+                res.render('MainWindow', {status: req.body.username, 
+                    photo: null});
+            }
+        }
+        else
+            res.render('error', { message: "Wrong Password",error: "Try again!" });  
+    });
 });
-             
-    app.listen(config.port, function() {
-    console.log("Escuchando en el puerto 3000");
+
+
+//Signup is received
+app.post("/signup", upload.single('file'), function(req, res) {
+    var aux = {};
+    
+    if (req.file !== undefined) {
+        
+        var file = req.file.path + "."+ req.file.mimetype.substr(6);
+        fs.rename(req.file.path, file, function(err) {
+            if (err) {res.render('error', {message: "Error!",error: err }); 
+            }
+        });
+        
+        aux.photo = req.file.filename + "." + req.file.mimetype.substr(6);
+    }
+    else {
+        aux.photo = null;
+    }
+    //Get the data from the form
+    aux.username = req.body.username;
+    aux.pass = req.body.pass;
+    aux.name = req.body.name;
+    aux.gender = req.body.gender;
+    aux.birthdate = req.body.birthdate;
+    
+    db.signup(aux, function(err, results) {
+        if (err !== null)
+            res.render('error', {message: "Error!", error: err });  
+        if (results)
+            res.redirect('/');
+    });
 });
 
-module.exports = app;
+//Log Out
+app.get('/logout',function(req, res){
+    res.clearCookie("username");
+    res.clearCookie("photo");
+    res.render('index', {status: ""});
+});
 
-/*
-        app.post("/procesar_formulario", function(request, response) {
-    request.checkBody("login", "Nombre de usuario no válido").matches(/^[A-Z0-9]*$/i);
-    request.checkBody("login", "Nombre de usuario vacío").notEmpty();
-    request.checkBody("pass", "La contraseña no tiene entre 6 y 10 caracteres").isLength({ min: 6, max: 10 });
-    request.checkBody("email", "Dirección de correo no válida").isEmail();
-    request.checkBody("fechaNacimiento", "Fecha de nacimiento no válida").isBefore();
-    request.getValidationResult().then(function(result) {
-        if (result.isEmpty()) {
-            response.redirect("/correcto.html");
-        } else {
-            console.log(result.array());
-            console.log(result.mapped());
-            var usuarioIncorrecto = {
-                login: request.body.login,
-                pass: request.body.pass,
-                email: request.body.email,
-                fechaNacimiento: request.body.fechaNacimiento
-            };
-            response.render("index", {errores: result.mapped(), usuario: usuarioIncorrecto });
+app.post("/signup", function(req, res) {
+    db.signup(req.body, function(err, results) {
+        if (err !== null)
+            res.render('error', {message: "Error!",error: err});  
+        if (results)
+            res.redirect('/');
+    });
+});
+
+//
+app.get("/mainboard", function(req, res){
+    db.loadGameList(req.cookies.username, 
+    function(err, results) {
+        if (err !== null) {
+            res.render('error', {message: "Error!", error: err }); 
+            }
+            else {
+                db.loadPlayerList(req.cookies.username, 
+                function(err, res_players) {
+                    if (err !== null) {
+                        res.render('error', { message: "Error!",error: err }); 
+                        }
+                        else {
+                            res.render('mainboard', {status: req.cookies.username, 
+                            game: results, playersInGame: res_players});           
+                        }   
+                });
+            }   
+    });
+});
+
+//load list of games to join
+app.get("/joingame", function(req, res){
+    db.loadGameList(req.cookies.username, 
+    function(err, results) {
+        if (err !== null) {
+            res.render('error', {message: "Error",error: err}); 
+            }
+            else {
+                db.loadPlayerList(req.cookies.username, 
+                function(err, res_players) {
+                    if (err !== null) {
+                        res.render('error', {message: "Error!",error: err}); 
+                        }
+                        else {                         
+                            res.render('joingame', {
+                                status: req.cookies.username, 
+                                game: results, 
+                                playersInGame: res_players});
+                        }   
+                });
+            }   
+    });
+});
+
+//Create game
+app.post("/creategame", function(req, res) {
+    var aux = {};
+    
+    aux.id_creator = req.cookies.username;
+    aux.name = req.body.name;
+    aux.max_players = req.body.max_players;
+    aux.turns_left = rules.maxTurn(req.body.num); 
+    
+    db.creategame(aux, function(err, results) {
+        if (err !== null)
+            res.render('error', {message: "Error!",error: err});  
+        if (results){
+            res.redirect('/mainboard');
         }
     });
 });
 
-*/
 
-app.use(function(req, res, next) {
-    res.status(404);
-    res.end("Not found: " + req.url);
+//joing a game
+app.get('/join',function(req, res){
+    
+    db.joingame(req.query, function(err, results) {
+     if (err !== null)
+            res.render('error', { message: "Error!", error: err});  
+        if (results) {
+            res.redirect('/mainboard');
+        }
+    });
 });
+
+//close a game
+app.get('/closegame',function(req, res){
+    db.closegame(req.query.id, function(err, results) {
+     if (err !== null)
+            res.render('error', { message: "Error!", error: err});  
+        if (results) {
+            res.redirect('/mainboard');
+        }
+    });
+});
+
+//enter game
+app.get('/entergame',function(req, res){
+    var auxGame = {};
+    auxGame.id = req.query.id;
+    auxGame.username = req.cookies.username;
+    db.loadgame(auxGame, function(err, results) {
+     if (err !== null)
+            res.render('error', { message: "Error!",error: err });  
+        if (results) {
+            res.render('game', {game: results});
+        }
+    });
+});
+
+
+
+
+//Redirection
+app.get("/", function(req, res){
+    if (req.cookies.username === undefined)
+        res.render('index', {status: "No user"});
+    else
+        res.render('MainWindow', {status: req.cookies.username, photo: req.cookies.photo});
+});
+
+app.get("/MainWindow", function(req, res){  
+    
+    if (req.cookies.username === undefined)
+        res.render('index', {status: " ", photo: null});
+    else {
+        res.render('MainWindow', {status: req.cookies.username, photo: req.cookies.photo});
+    }
+});
+
+
+
+// Errors
+app.use(function(req, res, next) {
+  var err = new Error('Not found');
+  err.status = 404;
+  next(err);
+});
+
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', { message: err.message, error: err });
+  });
+}
+
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', { message: err.message, error: {} });
+});
+
+
+
+
+
+app.listen(config.port);
+
+module.exports = app;

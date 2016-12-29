@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+body{
+    background:  url("../img/wallpaper1.png") repeat;
+    font-family: 'Open Sans', sans-serif;
+    font-color: white;
+}
+
+#topbar{
+    margin-left: 30%;
+    margin-button:10px;
+    
+}
+
+#topbartext{
+    position: absolute;
+    top: 40px;
+    right: 20px;
+    font-size: 30pt;
+    font-style: oblique;
+    color: #FFFFFF;
+}
+
+#imagetopbar{
+    margin-left: 30%;
+}
+
+#middle{
+    margin-top:18px;
+    margin-left: 30%;
+    margin-right: 30%;
+}
+
+#welcome { 
+    margin: 35px 0 0 25px;
+    top: 50%; 
+    left: 50%; 
+    background-color: rgba(46, 44, 44, 0.7);
+    border-radius: 25px;
+    border: 1px solid #000000 ;
+    padding: 15px; 
+    width: auto;
+    height: auto; 
+    margin-left: 30%;
+    margin-right: 30%;
+    color: white;
+    
+	
+}
+
+h2{
+    font-size: 15pt;
+    color: #FFFFFF;
+}
+
+h3{
+    padding-left:3px;
+    font-size: 20pt;
+    color:#42A513;
+}
+
+h4{
+    font-size: 12pt;
+    padding-left:10px;
+    color:#42A588;
+}
+
+#buttoncontainer{
+    font-size:12pt;
+    box-align: center;
+    color: #887788;
+}
+
+.button {
+    width: 150px;
+    border: 1px solid black;
+    text-align:center;
+    font-size:20pt;
+    background:#CCCCCC;
+    padding:5px;
+    margin-left:10px;
+    cursor:pointer;
+    transition-duration: 0.7s;
+}
+
+input[type="submit"] {
+    color: black;
+    padding: 3px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+}
+input {
+    border: 1px solid black; 
+    padding: 3px;
+    background: rgba(255,255,255,0.7);
+}
+
+
+
+
+
+
